@@ -5,15 +5,8 @@ function random(min, max){
     return Math.floor(Math.random() * (max-min +1)) +min
 }
 
-const checkAnswer = (value, rightOne)=>{
-    if((value) === rightOne){
-        console.log('bravo Elliot ! '+ rightOne)
-        return true
-    } else {
-        console.log('you lose... it was '+ rightOne)
-        return false
-    }
-}
+const checkAnswer = (value, rightOne)=>value === rightOne ? true : false
+
 
 function init(){
     let array=[]
@@ -24,37 +17,87 @@ function init(){
     return {propositions:array, goodResponse: array[random(0,3)]}
 }
 
+function newQuestion(prevQuestions, qType){
+    // prevQuestions -> objet {capitals:[], flags:[]}
+    let array=[]
+    let type = qType === 0 ? prevQuestions.capitals : prevQuestions.flags
+    for(let i = 0 ; array.length < 4; i++ ){
+        let id = random(0,249)
+        !array.includes(id) && !type.includes(id) ? array.push(id) : array.push()
+    }
+    return {propositions:array, goodResponse: array[random(0,3)]}
+}
+
 const defaultQuiz = {
     countries: [],
     questionType: 0,
-    allQuestionsAsked: {'capitals':[], 'flags':[]},
+    allQuestionsAsked: {capitals:[], flags:[]},
     resultsId: init(),
-    response:''
+    response:'',
+    nbGoodResponse:0
 }
 
 const quizReducer = (state, action) =>{
     let updatedQuiz;
+    let updatedAllQuestionsAsked ;
     if(action.type === 'INIT'){
+        updatedAllQuestionsAsked = state.questionType === 0 ? {capitals:[state.resultsId.goodResponse], flags:[]} : {capitals:[], flags:[state.resultsId.goodResponse]}
         let updatedCountries = action.countries
         updatedQuiz = {
             countries: updatedCountries,
             questionType: state.questionType,
-            allQuestionsAsked: state.allQuestionsAsked,
+            allQuestionsAsked: updatedAllQuestionsAsked,
             resultsId: state.resultsId,
-            response:''
+            response:'',
+            nbGoodResponse:state.nbGoodResponse
         }
+        console.log(updatedQuiz)
     }
 
     if(action.type === 'RESPONSE'){
         let updatedResponse = action.response
+        let updatedNbGoodResponse = updatedResponse === state.resultsId.goodResponse ? state.nbGoodResponse+1 : state.nbGoodResponse
+
         updatedQuiz = {
             countries: state.countries,
             questionType: state.questionType,
             allQuestionsAsked: state.allQuestionsAsked,
             resultsId: state.resultsId,
-            response:updatedResponse
+            response:updatedResponse,
+            nbGoodResponse:updatedNbGoodResponse
         }
-        console.log(updatedResponse)
+        // console.log(updatedQuiz)
+
+    }
+
+    if(action.type === 'NEWQUESTION'){
+
+        let updatedQType = random(0,1)
+        let updateResponse = ''
+        let updatedResultsId = newQuestion(state.allQuestionsAsked, updatedQType)
+        let prevCapitals = state.allQuestionsAsked.capitals
+        let prevFlags = state.allQuestionsAsked.flags
+
+        if(updatedQType === 0) {
+            let updatedCapitals = prevCapitals.push(updatedResultsId.goodResponse)
+            updatedAllQuestionsAsked = {capitals:updatedCapitals, flags: prevFlags}
+        } else {
+            let updatedFlags = prevFlags.push(updatedResultsId.goodResponse)
+            updatedAllQuestionsAsked = {capitals:prevCapitals, flags: updatedFlags}
+        }
+        // updatedAllQuestionsAsked = updatedQType === 0 ? {capitals:state.allQuestionsAsked.capitals.push(updatedResultsId.goodResponse), flags:state.allQuestionsAsked.flags} : {capitals:state.allQuestionsAsked.capitals, flags:state.allQuestionsAsked.flags.push(updatedResultsId.goodResponse)}
+
+        updatedQuiz = {
+            countries: state.countries,
+            questionType: updatedQType,
+            allQuestionsAsked: state.allQuestionsAsked,
+            resultsId: updatedResultsId,
+            response: updateResponse,
+            nbGoodResponse:state.nbGoodResponse
+        }
+        
+        console.log(updatedQuiz)
+
     }
 
     return updatedQuiz
@@ -75,6 +118,9 @@ const Quiz = props =>{
     const [selected, setSelected] = useState('')
     // gestion de détection de soumission de form
     const [formIsSubmited, setFormIsSubmited] = useState(false)
+    // gestion boutons en fonction de la réponse
+    const[ok, setOk] = useState(true)
+    
 
    
     // on récupère toutes les infos pays
@@ -118,13 +164,12 @@ const Quiz = props =>{
 
 
     const onSelectionHandler = e => {
-        // console.log(e)
         dispatchQuizAction({type: 'RESPONSE', response:e})
         setSelected(e)
     }
     useEffect(()=>{
         if(quizState.response.length !== 0){
-            checkAnswer(quizState.response,quizState.resultsId.goodResponse)
+            setOk(checkAnswer(quizState.response,quizState.resultsId.goodResponse))
             setSelected(quizState.response)
             document.getElementById('form').click()
             setFormIsSubmited(true)
@@ -135,6 +180,18 @@ const Quiz = props =>{
         e.preventDefault()
     }
     
+    const resultsHandler = () => {
+        let nbQuestions = (quizState.allQuestionsAsked.capitals.length + quizState.allQuestionsAsked.flags.length)
+        props.resultsHandler(quizState.nbGoodResponse, nbQuestions)
+    }
+
+    
+    const newQuestionHandler = () => {
+        dispatchQuizAction({type: 'NEWQUESTION'})
+        setFormIsSubmited(false)
+        setOk(true)
+        setSelected('')
+    }
 
     let quizItems = ()=>{
         let propositions= quizState.resultsId.propositions
@@ -163,9 +220,9 @@ const Quiz = props =>{
 
             <form id="form" onSubmit={submitHandler}>
                 {quizItems()}
-                {/* <button id="button" type="submit" onSubmit={submitHandler}>submit</button> */}
-                
             </form>
+                {formIsSubmited && ok && <button className="nextButton" onClick={newQuestionHandler}>NEXT</button>}
+                {formIsSubmited && !ok && <button className="nextButton" onClick={resultsHandler}>Results</button>}
             </>}
         </div>
     )

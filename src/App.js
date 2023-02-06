@@ -8,6 +8,12 @@ import illustration from './assets/undraw_adventure_4hum 1.svg'
 import Quiz from './components/Quiz';
 
 function App() {
+
+
+  const resultsHandler = (nbRes, nbQuest) => {
+    console.log(nbRes+" bonne(s) réponse(s) sur "+nbQuest)
+  }
+
   return (
     <Container fluid className="App">
       <Row className='centered'>
@@ -17,7 +23,7 @@ function App() {
             <img src={illustration} alt='ill' className='ill'/>
           </header>
           <Card  >
-            <Quiz/>
+            <Quiz resultsHandler={resultsHandler}/>
           </Card>
         </Col>
       </Row>

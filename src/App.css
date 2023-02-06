@@ -50,21 +50,28 @@ header{
 .responseButton:hover{
   background-color: rgba(249, 168, 38, 1);
   color: rgba(255, 255, 255, 1);
+  border: solid 2px white;
 }
 
 .responseButton.right{
   background-color: rgba(96, 191, 136, 1);
   color: rgba(255, 255, 255, 1);
+  border: solid 2px white;
 }
 .responseButton.wrong{
   background-color: rgba(234, 130, 130, 1);
   color: rgba(255, 255, 255, 1);
+  border: solid 2px white;
 }
 
 .nextButton{
   background-color: rgba(249, 168, 38, 1);
   color: rgba(255, 255, 255, 1);
+  font-weight: 700;
   border: none;
+  box-shadow: 0px 2px 4px rgba(252, 168, 47, 0.4);
+  border-radius: 12px;
+  padding: 5px 20px;
 }
 
 .tryAgainButton{
