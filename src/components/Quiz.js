@@ -150,7 +150,7 @@ const Quiz = props =>{
             let loadCountries = []
             const response = await fetch(url)
             if(!response.ok){
-                throw new Error ('An error occured. Please refresh.')
+                throw new Error ('An error occured. Please try again later.')
             }
             let data = await response.json()
             for(const el in data){
@@ -162,13 +162,13 @@ const Quiz = props =>{
                 })  
             }
             setAllCountries(loadCountries)
+            setIsLoading(false)
         }
-        try{
-            fetchingData()
-        } catch (error){
-            setError(error.message)
-        }
-        setIsLoading(false)
+
+        fetchingData().catch(err => {
+            setError(err.message)
+            setIsLoading(false)
+        })
         
     }, [])
     
@@ -239,7 +239,7 @@ const Quiz = props =>{
     return (
         <div className="quiz">
             {error && <h2 className="question pb-4">{error}</h2>}
-            {(isLoading || quizState.countries.length === 0) && <h2 className="question pb-4">Loading...</h2>}
+            {!error && (isLoading || quizState.countries.length === 0) && <h2 className="question pb-4">Loading...</h2>}
             {!error && !isLoading && allCountries.length !== 0 && results ==='' && <>
             <h2 className="question pb-4">
                 {quizState.questionType === 1 && <div className="pb-3"><img className="flag" src={allCountries[quizState.resultsId.goodResponse].flag} alt='flag'/></div>}
