@@ -51,7 +51,6 @@ const quizReducer = (state, action) =>{
             response:'',
             nbGoodResponse:state.nbGoodResponse
         }
-        console.log(updatedQuiz)
     }
 
     if(action.type === 'RESPONSE'){
@@ -66,7 +65,6 @@ const quizReducer = (state, action) =>{
             response:updatedResponse,
             nbGoodResponse:updatedNbGoodResponse
         }
-        // console.log(updatedQuiz)
 
     }
 
@@ -85,7 +83,6 @@ const quizReducer = (state, action) =>{
             let updatedFlags = prevFlags.push(updatedResultsId.goodResponse)
             updatedAllQuestionsAsked = {capitals:prevCapitals, flags: updatedFlags}
         }
-        // updatedAllQuestionsAsked = updatedQType === 0 ? {capitals:state.allQuestionsAsked.capitals.push(updatedResultsId.goodResponse), flags:state.allQuestionsAsked.flags} : {capitals:state.allQuestionsAsked.capitals, flags:state.allQuestionsAsked.flags.push(updatedResultsId.goodResponse)}
 
         updatedQuiz = {
             countries: state.countries,
@@ -96,8 +93,6 @@ const quizReducer = (state, action) =>{
             nbGoodResponse:state.nbGoodResponse
         }
         
-        console.log(updatedQuiz)
-
     }
 
     return updatedQuiz
@@ -155,13 +150,12 @@ const Quiz = props =>{
     }, [])
     
     const [quizState, dispatchQuizAction]= useReducer(quizReducer, defaultQuiz)
-    
+
     useEffect(()=>{
         if(!isLoading && !error && allCountries.length !== 0){
             dispatchQuizAction({type: 'INIT', countries:allCountries })
-        }
+        } 
     }, [allCountries, isLoading, error])
-
 
     const onSelectionHandler = e => {
         dispatchQuizAction({type: 'RESPONSE', response:e})
