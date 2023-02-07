@@ -7,13 +7,13 @@ const Results = props => {
     }
 
     return (
-        <div>
-            <img src={picture} alt='winner'/>
+        <>
+            <p><img src={picture} alt='winner'/></p>
             <h2 className='results'>Results</h2>
             <p className='resultsText'>You got <span className='number'>{props.nbResponses}</span> correct answers
              <br/>out of <span>{props.nbQuestions}</span> questions</p>
-            <button className='tryAgainButton' onClick={resetHandler}>Try again</button>
-        </div>
+            <div><button className='tryAgainButton' onClick={resetHandler}>Try again</button></div>
+        </>
     )
 
 }

@@ -1,5 +1,6 @@
 import { useEffect, useReducer, useState } from "react"
 import QuizItem from "./QuizItem"
+import Results from "./Results"
 
 function random(min, max){
     return Math.floor(Math.random() * (max-min +1)) +min
@@ -95,6 +96,26 @@ const quizReducer = (state, action) =>{
         
     }
 
+    if(action.type === 'NEWGAME'){
+
+        let updatedQType = random(0,1)
+        let updatedResultsId = init()
+
+        if(updatedQType === 0){
+            updatedAllQuestionsAsked = {capitals:[updatedResultsId.goodResponse], flags:[]}
+        } else {
+            updatedAllQuestionsAsked = {capitals:[], flags:[updatedResultsId.goodResponse]}
+        }
+        updatedQuiz = {
+            countries: state.countries,
+            questionType: updatedQType,
+            allQuestionsAsked: updatedAllQuestionsAsked,
+            resultsId: updatedResultsId,
+            response:'',
+            nbGoodResponse:0
+        }
+    }
+
     return updatedQuiz
 }
 
@@ -115,6 +136,8 @@ const Quiz = props =>{
     const [formIsSubmited, setFormIsSubmited] = useState(false)
     // gestion boutons en fonction de la réponse
     const[ok, setOk] = useState(true)
+    // gestion de l'affichage des résultats
+    const [results, setResults] = useState('')
     
 
    
@@ -165,18 +188,15 @@ const Quiz = props =>{
         if(quizState.response.length !== 0){
             setOk(checkAnswer(quizState.response,quizState.resultsId.goodResponse))
             setSelected(quizState.response)
-            document.getElementById('form').click()
+            if(results ===0){
+                document.getElementById('form').click()
+            }
             setFormIsSubmited(true)
         }
-    }, [quizState.response, quizState.resultsId.goodResponse])
+    }, [quizState.response, quizState.resultsId.goodResponse, results])
     
     const submitHandler = e => {
         e.preventDefault()
-    }
-    
-    const resultsHandler = () => {
-        let nbQuestions = (quizState.allQuestionsAsked.capitals.length + quizState.allQuestionsAsked.flags.length)
-        props.resultsHandler(quizState.nbGoodResponse, nbQuestions)
     }
 
     
@@ -201,12 +221,26 @@ const Quiz = props =>{
         })
         return items
     } 
-   
+
+    
+    const resultsHandler = () => {
+        let nbQuestions = (quizState.allQuestionsAsked.capitals.length + quizState.allQuestionsAsked.flags.length)
+        setResults({nbResponses: quizState.nbGoodResponse, nbQuestions:nbQuestions})
+    }
+    
+    const tryAgainHandler = () => {
+        setResults('')
+        dispatchQuizAction({type:'NEWGAME'})
+        setFormIsSubmited(false)
+        setOk(true)
+        setSelected('')
+    }
+
     return (
         <div className="quiz">
             {error && <h2 className="question pb-4">{error}</h2>}
             {(isLoading || quizState.countries.length === 0) && <h2 className="question pb-4">Loading...</h2>}
-            {!error && !isLoading && allCountries.length !== 0 && <>
+            {!error && !isLoading && allCountries.length !== 0 && results ==='' && <>
             <h2 className="question pb-4">
                 {quizState.questionType === 1 && <div className="pb-3"><img className="flag" src={allCountries[quizState.resultsId.goodResponse].flag} alt='flag'/></div>}
                 <div>{quizState.questionType === 0 ? allCountries[quizState.resultsId.goodResponse].capital+' is the capital of...' : 'Which country does this flag belong to?'}</div>
@@ -218,6 +252,8 @@ const Quiz = props =>{
                 {formIsSubmited && ok && <div><button className="nextButton" onClick={newQuestionHandler}>NEXT</button></div>}
                 {formIsSubmited && !ok && <div><button className="nextButton" onClick={resultsHandler}>Results</button></div>}
             </>}
+            {results !=='' && <Results nbResponses={results.nbResponses} nbQuestions={results.nbQuestions} tryAgain={tryAgainHandler}/>}
+
         </div>
     )
 }
