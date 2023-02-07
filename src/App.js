@@ -6,6 +6,7 @@ import './App.css';
 import Card from './components/UI/Card'
 import illustration from './assets/undraw_adventure_4hum 1.svg'
 import Quiz from './components/Quiz';
+import Results from './components/Results';
 
 function App() {
 
@@ -24,6 +25,9 @@ function App() {
           </header>
           <Card  >
             <Quiz resultsHandler={resultsHandler}/>
+          </Card>
+          <Card>
+            <Results/>
           </Card>
         </Col>
       </Row>
