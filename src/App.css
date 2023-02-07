@@ -37,6 +37,16 @@ header{
   
 }
 
+.quiz {
+  display: flex;
+  flex-direction: column;
+  padding: 0 5px;
+}
+.quiz>div{
+  align-self: end;
+  padding: 10px 10px 0 0;
+}
+
 .responseButton{
   font-size: 18px;
   background-color: rgba(255, 255, 255, 1);
@@ -44,7 +54,7 @@ header{
   color: rgba(96, 102, 208, 0.7);
   border-radius: 12px;
   padding: 5px;
-  margin: 5px;
+  margin: 5px 0;
 }
 
 .responseButton:hover{

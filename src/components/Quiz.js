@@ -114,7 +114,7 @@ const Quiz = props =>{
     const [allCountries, setAllCountries] = useState([])
     // gestion du chargement
     const [isLoading, setIsLoading] = useState(true)
-    // gestion de l'option sélectionnée
+    // gestion de la sélection d'option
     const [selected, setSelected] = useState('')
     // gestion de détection de soumission de form
     const [formIsSubmited, setFormIsSubmited] = useState(false)
@@ -221,8 +221,8 @@ const Quiz = props =>{
             <form id="form" onSubmit={submitHandler}>
                 {quizItems()}
             </form>
-                {formIsSubmited && ok && <button className="nextButton" onClick={newQuestionHandler}>NEXT</button>}
-                {formIsSubmited && !ok && <button className="nextButton" onClick={resultsHandler}>Results</button>}
+                {formIsSubmited && ok && <div><button className="nextButton" onClick={newQuestionHandler}>NEXT</button></div>}
+                {formIsSubmited && !ok && <div><button className="nextButton" onClick={resultsHandler}>Results</button></div>}
             </>}
         </div>
     )
