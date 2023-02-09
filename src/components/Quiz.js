@@ -25,6 +25,7 @@ function newQuestion(prevQuestions, qType){
     for(let i = 0 ; array.length < 4; i++ ){
         let id = random(0,249)
         !array.includes(id) && !type.includes(id) ? array.push(id) : array.push()
+       
     }
     return {propositions:array, goodResponse: array[random(0,3)]}
 }

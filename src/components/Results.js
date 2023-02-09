@@ -10,8 +10,10 @@ const Results = props => {
         <>
             <p><img src={picture} alt='winner'/></p>
             <h2 className='results'>Results</h2>
-            <p className='resultsText'>You got <span className='number'>{props.nbResponses}</span> correct answers
-             <br/>out of <span>{props.nbQuestions}</span> questions</p>
+            {props.nbResponses === 0 && <p className='resultsText'>That's a shame, try again!</p>}
+            {props.nbResponses === 1 && <p className='resultsText'>You got <span className='number'>{props.nbResponses}</span> correct answer! <br/>You can do better, try again!</p>}
+            {props.nbResponses > 1 && <p className='resultsText'>You got <span className='number'>{props.nbResponses}</span> correct answers!</p>}
+            {props.nbResponses >= 10 && <p className='resultsText'>You got <span className='number'>{props.nbResponses}</span> correct answers!<br/>You're on fire! Can you do better?</p>}
             <div><button className='tryAgainButton' onClick={resetHandler}>Try again</button></div>
         </>
     )

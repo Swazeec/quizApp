@@ -3,6 +3,8 @@
 body {
   margin: 0;
   font-family: 'poppins', sans-serif;
+  background: url('./assets/background.png') no-repeat;
+  background-size: cover;
 }
 
 code {
